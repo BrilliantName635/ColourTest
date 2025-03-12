@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ishihara Color Test</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #0044cc;
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+        }
+        .container {
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            padding: 10px;
+            font-size: 18px;
+            width: 80%;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        input:focus {
+            border-color: #0044cc;
+            outline: none;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #0044cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0033aa;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <header>Ishihara Color Blindness Test</header>
+    <div class="container">
+        <img id="plateImage" src="" alt="Ishihara Plate">
+        <br>
+        <input type="number" id="userInput" placeholder="Enter the number" autocomplete="off" min="0" step="1">
+        <button onclick="nextPlate()">Next</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        const plates = [
+            { src: "Plates/plate(1)_12.png", answer: "12" },
+            { src: "Plates/plate(2)_8.png", answer: "8" },
+            { src: "Plates/plate3.png", answer: "6" },
+            { src: "Plates/plate(4)_29.png", answer: "29" },
+            { src: "Plates/plate5.png", answer: "57" },
+            { src: "Plates/plate(6)_5.png", answer: "5" },
+            { src: "Plates/plate(7)_3.png", answer: "3" },
+            { src: "Plates/plate(8)_15.png", answer: "15" },
+            { src: "Plates/plate(9)_74.png", answer: "74" },
+            { src: "Plates/plate10.png", answer: "2" },
+            { src: "Plates/plate(11)_6.png", answer: "6" },
+            { src: "Plates/plate12.png", answer: "97" },
+            { src: "Plates/plate(13)_45.png", answer: "45" },
+            { src: "Plates/plate(14)_5.png", answer: "5" },
+            { src: "Plates/plate(15)_7.png", answer: "7" },
+            { src: "Plates/plate(16)_16.png", answer: "16" },
+            { src: "Plates/plate(17)_73.png", answer: "73" },
+            { src: "Plates/plate(18)_0.png", answer: "0" },
+            { src: "Plates/plate(19)_0.png", answer: "0" },
+            { src: "Plates/plate(20)_0.png", answer: "0" },
+            { src: "Plates/plate(21)_0.png", answer: "0" },
+            { src: "Plates/plate(22)_26.png", answer: "26" },
+            { src: "Plates/plate(23)_42.png", answer: "42" },
+            { src: "Plates/plate24.png", answer: "35" },
+            { src: "Plates/plate25.png", answer: "96" },
+            // Add all 38 plates here in the same format
+        ];
+
+        let currentPlate = {};
+
+        function nextPlate() {
+    const userAnswer = document.getElementById("userInput").value.trim();
+    const resultElement = document.getElementById("result");
+
+    if (userAnswer) {
+        if (userAnswer === currentPlate.answer) {
+            resultElement.innerText = "✅ Correct!";
+            resultElement.className = "correct";
+        } else {
+            resultElement.innerText = `❌ Incorrect! The correct answer was ${currentPlate.answer}.`;
+            resultElement.className = "incorrect";
+        }
+    }
+
+    // Load a new random plate
+    currentPlate = plates[Math.floor(Math.random() * plates.length)];
+    document.getElementById("plateImage").src = currentPlate.src;
+    document.getElementById("userInput").value = "";
+
+    // Clear the result after 3 seconds
+    setTimeout(() => {
+        resultElement.innerText = "";
+    }, 3000);
+}
+
+
+        window.onload = nextPlate;
+    </script>
+</body>
+</html>
