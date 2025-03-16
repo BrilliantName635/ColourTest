@@ -27,13 +27,22 @@
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-        img {
-            width: 100%;
-            max-width: 400px;
-            height: auto;
-            margin: 20px 0;
+        .plate-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            min-height: 250px; /* Keep space for the image */
+            background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        #plateImage {
+            max-width: 100%;
+            height: auto;
+        }
+        .hidden {
+            visibility: hidden; /* Hides the image while keeping space occupied */
         }
         input {
             padding: 10px;
@@ -75,18 +84,21 @@
     </style>
 </head>
 <body>
-    <header>Test</header>
+    <header>Ishihara Color Blindness Test</header>
     <div class="container">
-        <img id="plateImage" src="" alt="Ishihara Plate">
+        <div class="plate-container">
+            <img id="plateImage" src="" alt="Ishihara Plate">
+        </div>
         <br>
         <input type="number" id="userInput" placeholder="Enter the number" autocomplete="off" min="0" step="1">
-        <button onclick="nextPlate()">Next</button>
+        <button onclick="checkAnswer()">Submit</button>
         <p id="result"></p>
+        <button onclick="nextPlate()">Next Plate</button>
     </div>
 
     <script>
         const plates = [
-            { src: "plate(1)_12.png", answer: "12" },
+        { src: "plate(1)_12.png", answer: "12" },
             { src: "plate(2)_8.png", answer: "8" },
             { src: "plate(3)_6.png", answer: "6" },
             { src: "plate(4)_29.png", answer: "29" },
@@ -115,33 +127,61 @@
         ];
 
         let currentPlate = {};
+        let hidePlateTimeout;
+        let hasAnswered = false;
 
         function nextPlate() {
-    const userAnswer = document.getElementById("userInput").value.trim();
-    const resultElement = document.getElementById("result");
+            const plateImage = document.getElementById("plateImage");
+            const resultElement = document.getElementById("result");
+            const inputField = document.getElementById("userInput");
 
-    if (userAnswer) {
-        if (userAnswer === currentPlate.answer) {
-            resultElement.innerText = "✅ Correct!";
-            resultElement.className = "correct";
-        } else {
-            resultElement.innerText = `❌ Incorrect! The correct answer was ${currentPlate.answer}.`;
-            resultElement.className = "incorrect";
+            // Reset everything
+            resultElement.innerText = "";
+            inputField.value = "";
+            hasAnswered = false;
+            plateImage.classList.remove("hidden");
+
+            // Load a new random plate
+            currentPlate = plates[Math.floor(Math.random() * plates.length)];
+            plateImage.src = currentPlate.src;
+
+            // Clear previous timeout
+            clearTimeout(hidePlateTimeout);
+
+            // Hide the plate after 3 seconds (replace with blank space)
+            hidePlateTimeout = setTimeout(() => {
+                if (!hasAnswered) {
+                    plateImage.classList.add("hidden");
+                }
+            }, 3000);
         }
-    }
 
-    // Load a new random plate
-    currentPlate = plates[Math.floor(Math.random() * plates.length)];
-    document.getElementById("plateImage").src = currentPlate.src;
-    document.getElementById("userInput").value = "";
+        function checkAnswer() {
+            const userAnswer = document.getElementById("userInput").value.trim();
+            const resultElement = document.getElementById("result");
+            const plateImage = document.getElementById("plateImage");
 
-    // Clear the result after 3 seconds
-    setTimeout(() => {
-        resultElement.innerText = "";
-    }, 3000);
-}
+            if (!userAnswer) {
+                resultElement.innerText = "⚠️ Please enter an answer before continuing!";
+                resultElement.className = "incorrect";
+                return;
+            }
 
+            hasAnswered = true; // Mark as answered
 
+            if (userAnswer === currentPlate.answer) {
+                resultElement.innerText = "✅ Correct!";
+                resultElement.className = "correct";
+            } else {
+                resultElement.innerText = `❌ Incorrect! The correct answer was ${currentPlate.answer}.`;
+                resultElement.className = "incorrect";
+            }
+
+            // Show the plate again if it was hidden
+            plateImage.classList.remove("hidden");
+        }
+
+        // Load the first plate on page load
         window.onload = nextPlate;
     </script>
 </body>
